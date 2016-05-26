@@ -16,6 +16,7 @@ class ServerJsonParser private constructor() {
     }
 
     fun process(receive: String) {
+        println(receive.toString())
         request = json.parse(receive.toString()).asJsonObject
     }
 
