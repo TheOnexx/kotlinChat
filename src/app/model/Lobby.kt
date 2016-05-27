@@ -24,10 +24,9 @@ class Lobby(val dataFile: String) {
     }
 
     fun sendPublicMessage(subscriber: Subscriber, message: String) {
-        for(sub in userList) {
-            if(sub.name != subscriber.name) {
-                sub.send(message);
-            }
+        userList.forEach {
+            if(it.name == subscriber.name)
+                it.send(message)
         }
     }
 
