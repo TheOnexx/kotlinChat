@@ -9,8 +9,12 @@ import java.net.Socket
  */
 class ServerTransport(socket: Socket, lobby: Lobby) : Transport(socket) {
     var controller: Controller? = null
+    var lobby: Lobby
+    init {
+        this.lobby = lobby
+    }
     fun listen() {
-        controller = Controller(this)
+        controller = Controller(this, lobby)
         startEventLoop();
     }
 

@@ -20,7 +20,7 @@ class ServerJsonParser private constructor() {
         request = json.parse(receive.toString()).asJsonObject
     }
 
-    val jsonType: String
+    val jsonType: String?
         get() = getCustomEntity("type")
 
     fun getCustomEntity(property: String): String {
@@ -28,18 +28,28 @@ class ServerJsonParser private constructor() {
     }
 
     fun createError(errorMsg: String): String {
-        return createCustomMessage("error", errorMsg)
+        return createHeaderType("error").appendJSONCustomProperty("message", errorMsg).toString()
     }
 
     fun createCustomMessage(property: String, value: String): String {
         var json = JsonObject()
-        json = appendCustomProperty(json, property, value)
-        return json.toString()
+        return json.appendJSONCustomProperty(property, value).toString()
     }
 
-    private fun appendCustomProperty(json: JsonObject, property: String, value: String): JsonObject {
-        json.addProperty(property, value)
-        return json
+    fun createUserMessage(login: String, message: String): String {
+        return createHeaderType("message").
+                appendJSONCustomProperty("login", login).
+                appendJSONCustomProperty("message", message).toString();
+    }
+
+    fun JsonObject.appendJSONCustomProperty(property: String, value: String): JsonObject {
+        this.addProperty(property, value)
+        return this;
+    }
+
+    private fun createHeaderType(type: String): JsonObject {
+        var json = JsonObject()
+        return json.appendJSONCustomProperty("type", type)
     }
 
     fun createListMessage(allClients: List<Subscriber>): String {
@@ -54,6 +64,13 @@ class ServerJsonParser private constructor() {
         json.add("data", array)
         return json.toString()
     }
+    fun getLogin() : String? {
+        try {
+            return getCustomEntity("login")
+        } catch (e: IllegalArgumentException) {
+            return null
+        }
+    }
 
     companion object {
         private val parser: ServerJsonParser? = null
@@ -66,3 +83,4 @@ class ServerJsonParser private constructor() {
             }
     }
 }
+

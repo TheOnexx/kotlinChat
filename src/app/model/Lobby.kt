@@ -9,13 +9,13 @@ import java.util.*
 class Lobby(val dataFile: String) {
     private var ioModule: ChatIO
     private var userList: MutableList<Subscriber> = ArrayList();
-    private var userCount: Int = 0;
+    val userCount = userList.size
     init {
         ioModule = ChatIO(dataFile)
     }
     fun addUser(subscriber: Subscriber): Boolean{
         if(userList.contains(subscriber)) {
-            throw UserExistException("Such User is already exists")
+            return false
         }
         return userList.add(subscriber)
     }
@@ -24,16 +24,15 @@ class Lobby(val dataFile: String) {
     }
 
     fun sendPublicMessage(subscriber: Subscriber, message: String) {
-        for(sub in userList) {
-            if(sub.name != subscriber.name) {
-                sub.send(message);
-            }
+        userList.forEach {
+            if(it.name != subscriber.name)
+                it.send(message)
         }
+    }
+    fun findSubscriberByName(name: String?): Subscriber {
+        return userList.find { it.name == name } ?: throw IllegalStateException("There is no such user in the list")
     }
 
 
 }
 
-class UserExistException(s: String) : Throwable() {
-
-}
