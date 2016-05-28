@@ -1,5 +1,6 @@
 package app.controller
 
+import app.model.ServerJsonParser
 import app.transport.ServerTransport
 
 /**
@@ -7,10 +8,14 @@ import app.transport.ServerTransport
  */
 class Controller(serverTransport: ServerTransport) {
     private val serverTransport: ServerTransport
+    private var jsonParser: ServerJsonParser
     init {
         this.serverTransport = serverTransport
+        jsonParser = ServerJsonParser.instance
+
     }
     fun handleMessage(message: String) {
-
+        jsonParser.process(message)
+        println(jsonParser.jsonType)
     }
 }
