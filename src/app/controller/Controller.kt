@@ -1,5 +1,6 @@
 package app.controller
 
+import app.controller.exception.IncorrectCredentialsException
 import app.model.Lobby
 import app.model.ServerJsonParser
 import app.transport.ServerTransport
@@ -23,6 +24,9 @@ class Controller(serverTransport: ServerTransport, lobby: Lobby) {
         try {
             var requestHandler = getRequestHandler(jsonParser.jsonType)
             requestHandler.handleEvent(this, message)
+        } catch(e: IncorrectCredentialsException) {
+            println("error")
+            serverTransport.sendEvent(jsonParser.createError("Incorrect Login"))
         } catch (e: Throwable) {
             e.printStackTrace()
         }
