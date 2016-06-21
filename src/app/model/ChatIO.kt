@@ -28,7 +28,7 @@ class ChatIO(dataFile: String) {
     }
 
     fun check(index: Int, value: String):Boolean {
-        Scanner(File(dataFile)).use {
+        BufferedReader(FileReader(File(dataFile))).use {
             var res = getString(it, value, index)
             println("inputValue: $value, Result: $res")
             if(res != null) {
@@ -38,16 +38,18 @@ class ChatIO(dataFile: String) {
         return false
     }
 
-    private fun getString(scanner: Scanner, name: String, index: Int): String? {
-        do {
-            if(!scanner.hasNext()) return null
-            var line = scanner.nextLine()
-            println("FileLine: $line")
-            var matcher = pattern.matcher(line)
-            if(!matcher.matches()) return null
-            if(name == matcher.group(index)) return name
-            else continue
-        } while(line != null)
-        return null
+    private fun getString(reader: BufferedReader, name: String, index: Int): String? {
+        var str: String? = null
+        reader.forEachLine {
+            println("FileLine: $it")
+            var matcher = pattern.matcher(it)
+            if (matcher.matches()) {
+                if (name == matcher.group(index)) {
+                    str = name
+                    return@forEachLine
+                }
+            }
+        }
+        return str
     }
 }
